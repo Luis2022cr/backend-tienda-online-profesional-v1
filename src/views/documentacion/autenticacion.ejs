@@ -1,0 +1,187 @@
+<h2>Endpoints de Autenticación</h2>
+
+<details>
+    <summary>POST /api/v1/auth/registro</summary>
+    <ul>
+        <li><strong>Descripción:</strong> Permite registrar un nuevo usuario en el sistema. Genera automáticamente una
+            contraseña segura y envía un correo de bienvenida con las credenciales al usuario.</li>
+        <br>
+        <li><strong>Instrucciones:</strong> Envía un objeto JSON con los detalles del usuario a registrar. La
+            contraseña
+            se genera automáticamente y se envía por correo electrónico.</li>
+        <br>
+        <li><strong>Ejemplo de solicitud:</strong></li>
+        <pre>
+POST /api/v1/auth/registro
+Content-Type: application/json
+
+{
+  "nombre": "Juan",
+  "apellido": "Pérez",
+  "correo": "example@gmail.com",
+  "nombre_usuario": "juanperez",
+  "role_id": "1",
+  "password": "contraseñasegura123"
+  "confirmPassword": "contraseñasegura123"
+}
+   </pre>
+        <li><strong>Ejemplo de respuesta:</strong></li>
+        <pre>
+{
+    "message": "Usuario registrado exitosamente y correo de bienvenida enviado."
+}
+   </pre>
+        <li><strong>Errores posibles:</strong></li>
+        <ul>
+            <li><strong><code>400 Bad Request:</code></strong> Si el correo o nombre de usuario ya están en uso.
+                <pre><code>
+{
+    "error": "El correo ya está registrado"
+}
+        </code></pre>
+            </li>
+            <li><strong><code>500 Internal Server Error:</code></strong> En caso de error en el servidor o la base de
+                datos.
+                <pre><code>
+{
+    "error": "Error al registrar el usuario"
+}
+        </code></pre>
+            </li>
+        </ul>
+    </ul>
+</details>
+
+<details>
+    <summary>POST /api/v1/auth/login</summary>
+    <ul>
+        <li><strong>Descripción:</strong> Permite que un usuario inicie sesión y obtenga un token JWT para
+            autenticación
+            en futuras solicitudes.</li>
+        <br>
+        <li><strong>Instrucciones:</strong> Envía un objeto JSON con el nombre de usuario y la contraseña.</li>
+        <br>
+        <li><strong>Ejemplo de solicitud:</strong></li>
+        <pre>
+POST /api/v1/auth/login
+Content-Type: application/json
+
+{
+    "nombre_usuario": "juanperez",
+    "password": "contraseña123"
+}
+    </pre>
+        <li><strong>Ejemplo de respuesta:</strong></li>
+        <pre>
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "id": "12345678-1234-1234-1234-123456789012",
+    "nombre_usuario": "juanperez",
+    "role_id": 1
+}
+    </pre>
+        <li><strong>Errores posibles:</strong></li>
+        <ul>
+            <li><strong><code>401 Unauthorized:</code></strong> Si el nombre de usuario o la contraseña son incorrectos.
+                <pre><code>
+{
+    "error": "Nombre de usuario o contraseña incorrectos"
+}
+        </code></pre>
+            </li>
+            <li><strong><code>500 Internal Server Error:</code></strong> En caso de error en el servidor o la base de
+                datos.
+                <pre><code>
+{
+    "error": "Error al iniciar sesión"
+}
+        </code></pre>
+            </li>
+        </ul>
+    </ul>
+</details>
+
+<details>
+    <summary>POST /api/v1/auth/generar-correo-recuperacion</summary>
+    <ul>
+        <li><strong>Descripción:</strong> Envía un correo electrónico al usuario con un enlace para restablecer su
+            contraseña.</li>
+        <br>
+        <li><strong>Instrucciones:</strong> Envía un objeto JSON con el correo electrónico registrado del usuario.
+        </li>
+        <br>
+        <li><strong>Ejemplo de solicitud:</strong></li>
+        <pre>
+POST /api/v1/auth/generar-correo-recuperacion
+Content-Type: application/json
+
+{
+    "correo": "juan.perez@example.com"
+}
+    </pre>
+        <li><strong>Ejemplo de respuesta:</strong></li>
+        <pre>
+{
+    "message": "Correo de recuperación enviado."
+}
+    </pre>
+        <li><strong>Errores posibles:</strong></li>
+        <ul>
+            <li><strong><code>404 Not Found:</code></strong> Si el correo no está registrado.
+                <pre><code>
+{
+    "error": "El correo no está registrado"
+}
+        </code></pre>
+            </li>
+            <li><strong><code>500 Internal Server Error:</code></strong> En caso de error en el servidor o la base de
+                datos.
+                <pre><code>
+{
+    "error": "Error al generar el correo de recuperación"
+}
+        </code></pre>
+            </li>
+        </ul>
+    </ul>
+</details>
+
+<details>
+    <summary>POST /api/v1/auth/cambiar-password</summary>
+    <ul>
+        <li><strong>Descripción:</strong> Permite al usuario cambiar su contraseña utilizando un token de
+            recuperación.
+        </li>
+        <br>
+        <li><strong>Instrucciones:</strong> Envía un objeto JSON con el token de recuperación y la nueva contraseña.
+        </li>
+        <br>
+        <li><strong>Ejemplo de solicitud:</strong></li>
+        <pre>
+POST /api/v1/auth/cambiar-password
+Content-Type: application/json
+
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "newPassword": "nuevaContraseña123"
+}
+    </pre>
+        <li><strong>Ejemplo de respuesta:</strong></li>
+        <pre>
+{
+    "message": "Contraseña actualizada exitosamente."
+}
+    </pre>
+        <li><strong>Errores posibles:</strong></li>
+        <ul>
+            <li><strong><code>500 Internal Server Error:</code></strong> En caso de error en el servidor o la base de
+                datos.
+                <pre><code>
+{
+    "error": "Error al cambiar la contraseña"
+}
+        </code></pre>
+            </li>
+        </ul>
+    </ul>
+</details>

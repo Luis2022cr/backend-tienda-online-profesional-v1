@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Endpoint - Documentacion</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #000000;
+      margin: 0;
+      padding: 20px;
+      color: #ffffff;
+    }
+
+    h1 {
+      text-align: center;
+      color: #4a90e2;
+      margin-bottom: 30px;
+      font-size: 2rem;
+      /* Tamaño de fuente relativo */
+    }
+
+    h2 {
+      color: #ffffff;
+      border-bottom: 2px solid #4a90e2;
+      padding-bottom: 5px;
+      margin-bottom: 15px;
+      font-size: 1.5rem;
+      /* Tamaño de fuente relativo */
+    }
+
+    details {
+      background-color: #000000;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-bottom: 15px;
+      padding: 15px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    details[open] {
+      background-color: #333333;
+      border-color: #4a90e2;
+    }
+
+    details summary {
+      font-weight: bold;
+      cursor: pointer;
+      color: #4a90e2;
+    }
+
+    details summary:hover {
+      color: #357abd;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+      background-color: #000000;
+      border-left: 4px solid #4a90e2;
+      border-right: 1px solid #ffffff;
+      border-top: 1px solid #ffffff;
+      border-bottom: 1px solid #ffffff;
+      padding: 10px;
+      border-radius: 3px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+
+    code {
+      font-family: monospace;
+      color: #e94e77;
+    }
+
+    header {
+      background-color: #000000;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .menu {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      /* Permitir que los elementos se envuelvan */
+    }
+
+    .menu a {
+      padding: 10px 20px;
+      text-decoration: none;
+      color: black;
+      background-color: #f0f0f0;
+      margin: 5px;
+      /* Ajustar margen para dispositivos pequeños */
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    .menu a.active {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .content {
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-top: 20px;
+    }
+
+    ::-webkit-scrollbar {
+      width: 12px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #000000;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: #4a90e2;
+      border-radius: 10px;
+      border: 2px solid #ffffff;
+    }
+
+    /* Media Queries para pantallas pequeñas */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      h2 {
+        font-size: 1.3rem;
+      }
+
+      .menu a {
+        padding: 8px 15px;
+        font-size: 0.9rem;
+      }
+
+      .content {
+        padding: 15px;
+        margin-top: 15px;
+      }
+    }
+
+    /* Media Queries para pantallas muy pequeñas (móviles) */
+    @media (max-width: 480px) {
+      body {
+        padding: 5px;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      h2 {
+        font-size: 1.2rem;
+      }
+
+      .menu a {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+      }
+
+      .content {
+        padding: 10px;
+        margin-top: 10px;
+      }
+    }
+  </style>
+
+</head>
+
+<body>
+  <h1>Documentacion - Endpoints Tienda Online (Catalago) v1</h1>
+  <header>
+    <div class="menu">
+      <a href="?option=1" class="<%= option === '1' ? 'active' : '' %>">Autenticacion</a>
+      <a href="?option=2" class="<%= option === '2' ? 'active' : '' %>">Categorias</a>
+      <a href="?option=3" class="<%= option === '3' ? 'active' : '' %>">Productos</a>
+      <a href="?option=4" class="<%= option === '4' ? 'active' : '' %>">Banners</a>
+      <a href="?option=5" class="<%= option === '5' ? 'active' : '' %>">Usuarios</a>
+      <a href="?option=6" class="<%= option === '6' ? 'active' : '' %>">Detalles Productos</a>
+      <a href="?option=7" class="<%= option === '7' ? 'active' : '' %>">Negocio</a>
+    </div>
+  </header>
+
+  <div class="content">
+    <% if (option==='1' ) { %>
+      <%- include('documentacion/autenticacion') %>
+        <% } else if (option==='2' ) { %>
+          <%- include('documentacion/categorias') %>
+            <% } else if (option==='3' ) { %>
+              <%- include('documentacion/productos') %>
+                <% } else if (option==='4' ) { %>
+                  <%- include('documentacion/banner') %>
+                    <% } else if (option==='5' ) { %>
+                      <%- include('documentacion/usuario') %>
+                        <% } else if (option==='6' ) { %>
+                          <%- include('documentacion/detalle_productos') %>
+                          <% } else if (option==='7' ) { %>
+                            <%- include('documentacion/negocio') %>
+                            <% } else { %>
+                              <p>Por favor, selecciona una opción.</p>
+                              <% } %>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,163 @@
+<h2>Endpoints de Categorías</h2>
+
+<details>
+    <summary>GET /api/v1/categorias</summary>
+    <ul>
+        <li><strong>Descripción:</strong> Obtiene una lista de todas las categorías existentes.</li>
+        <li><strong>Instrucciones:</strong> No se requieren parámetros adicionales.</li>
+        <li><strong>Ejemplo de respuesta:</strong></li>
+        <pre>
+[
+    {
+        "id": "12345",
+        "nombre": "Electrónica",
+        "descripcion": "Dispositivos electrónicos.",
+        "imagen": "https://example.com/image.jpg",
+        "slug": "electronica"
+    },
+    {
+        "id": "678asdasd90",
+        "nombre": "Ropa",
+        "descripcion": "Prendas de vestir.",
+        "imagen": "https://example.com/image2.jpg",
+        "slug": "ropa"
+    }
+]
+</pre>
+        <li><strong>Errores posibles:</strong></li>
+        <ul>
+            <li><strong><code>500 Internal Server Error:</code></strong> En caso de error en la base de datos o el
+                servidor.
+                <pre><code>{
+    "error": "Error fetching categories"
+}</code></pre>
+            </li>
+        </ul>
+    </ul>
+</details>
+
+<details>
+    <summary>GET /api/v1/categorias/:slug</summary>
+    <ul>
+        <li><strong>Descripción:</strong> Obtiene una categoría específica utilizando su slug.</li>
+        <li><strong>Instrucciones:</strong> Se debe proporcionar el <code>slug</code> de la categoría en la URL.
+        </li>
+        <li><strong>Ejemplo de respuesta:</strong></li>
+        <pre>
+{
+    "id": "12345",
+    "nombre": "Electrónica",
+    "descripcion": "Dispositivos electrónicos.",
+    "imagen": "https://example.com/image.jpg",
+    "slug": "electronica"
+}
+</pre>
+        <li><strong>Errores posibles:</strong></li>
+        <ul>
+            <li><strong><code>404 Not Found:</code></strong> Si no se encuentra una categoría con el slug
+                proporcionado.
+                <pre><code>{
+    "error": "Categoría no encontrada"
+}</code></pre>
+            </li>
+        </ul>
+    </ul>
+</details>
+
+<details>
+    <summary>POST /api/v1/categorias</summary>
+    <ul>
+        <li><strong>Descripción:</strong> Crea una nueva categoría con nombre, descripción e imagen.</li>
+        <li><strong>Instrucciones:</strong> Envía un objeto JSON con los detalles de la nueva categoría y un archivo
+            de imagen opcional.</li>
+        <li><strong>Ejemplo de solicitud:</strong></li>
+        <pre>
+POST /api/v1/categorias
+Content-Type: multipart/form-data
+
+{
+    "nombre": "Muebles",
+    "descripcion": "Categoría de muebles.",
+    "imagen": "archivo-imagen.jpg"
+}
+</pre>
+        <li><strong>Ejemplo de respuesta:</strong></li>
+        <pre>{
+    "message": "Categoría creada exitosamente"
+}</pre>
+        <li><strong>Errores posibles:</strong></li>
+        <ul>
+            <li><strong><code>400 Bad Request:</code></strong> Si falta el nombre o descripción.
+                <pre><code>{
+    "error": "Todos los campos son obligatorios."
+}</code></pre>
+            </li>
+            <li><strong><code>500 Internal Server Error:</code></strong> En caso de error con la base de datos o
+                Cloudinary.
+                <pre><code>{
+    "error": "Error al crear la categoría"
+}</code></pre>
+            </li>
+        </ul>
+    </ul>
+</details>
+
+<details>
+    <summary>PUT /api/v1/categorias/:id</summary>
+    <ul>
+        <li><strong>Descripción:</strong> Actualiza una categoría existente, permitiendo cambiar el nombre,
+            descripción e imagen.</li>
+        <li><strong>Instrucciones:</strong> Proporciona el <code>id</code> de la categoría a actualizar en la URL y
+            envía un objeto JSON con los campos a modificar.</li>
+        <li><strong>Ejemplo de solicitud:</strong></li>
+        <pre>
+PUT /api/v1/categorias/12345
+Content-Type: multipart/form-data
+
+{
+    "nombre": "Electrónica y Gadgets",
+    "descripcion": "Nuevos dispositivos electrónicos.",
+    "imagen": "nueva-imagen.jpg"
+}
+</pre>
+        <li><strong>Ejemplo de respuesta:</strong></li>
+        <pre>{
+    "message": "Categoría actualizada exitosamente"
+}</pre>
+        <li><strong>Errores posibles:</strong></li>
+        <ul>
+            <li><strong><code>400 Bad Request:</code></strong> Si falta el nombre o la descripción.
+                <pre><code>{
+    "error": "El nombre de la categoría es obligatorio."
+}</code></pre>
+            </li>
+            <li><strong><code>500 Internal Server Error:</code></strong> Si ocurre un problema durante la
+                actualización.
+                <pre><code>{
+    "error": "Error al actualizar la categoría"
+}</code></pre>
+            </li>
+        </ul>
+    </ul>
+</details>
+
+<details>
+    <summary>DELETE /api/v1/categorias/:id</summary>
+    <ul>
+        <li><strong>Descripción:</strong> Elimina una categoría por su <code>id</code>.</li>
+        <li><strong>Instrucciones:</strong> Proporciona el <code>id</code> de la categoría en la URL.</li>
+        <li><strong>Ejemplo de respuesta:</strong></li>
+        <pre>{
+    "message": "Categoría eliminada exitosamente"
+}</pre>
+        <li><strong>Errores posibles:</strong></li>
+        <ul>
+            <li><strong><code>500 Internal Server Error:</code></strong> Si la categoría está asociada a productos o
+                si hay un error en el servidor.
+                <pre><code>{
+    "error": "Error al eliminar la categoría (Esta asociada a productos)"
+}</code></pre>
+            </li>
+        </ul>
+    </ul>
+</details>

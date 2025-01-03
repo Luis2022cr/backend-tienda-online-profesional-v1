@@ -1,0 +1,147 @@
+<h2>Endpoints de Negocios</h2>
+
+<details>
+    <summary>GET /api/v1/negocio</summary>
+    <ul>
+        <li><strong>Descripción:</strong> Obtiene una lista de todos los negocios sin redes sociales.</li>
+        <li><strong>Instrucciones:</strong> No se requieren parámetros adicionales.</li>
+        <li><strong>Ejemplo de respuesta:</strong></li>
+        <pre>
+[
+    {
+        "id": "1",
+        "logo": "https://example.com/logo1.jpg",
+        "nombre": "Negocio 1",
+        "descripcion": "Descripción del negocio 1"
+    },
+    {
+        "id": "2",
+        "logo": "https://example.com/logo2.jpg",
+        "nombre": "Negocio 2",
+        "descripcion": "Descripción del negocio 2"
+    }
+]
+        </pre>
+        <li><strong>Errores posibles:</strong></li>
+        <ul>
+            <li><strong><code>500 Internal Server Error:</code></strong> En caso de error en la base de datos o el servidor.
+                <pre><code>{
+    "error": "Error al obtener negocios"
+}</code></pre>
+            </li>
+        </ul>
+    </ul>
+</details>
+
+<details>
+    <summary>GET /api/v1/negocio/:id</summary>
+    <ul>
+        <li><strong>Descripción:</strong> Obtiene los detalles de un negocio específico por su ID.</li>
+        <li><strong>Instrucciones:</strong> Proporciona el <code>id</code> del negocio en la URL.</li>
+        <li><strong>Ejemplo de respuesta:</strong></li>
+        <pre>
+{
+    "negocio": {
+        "id": "1",
+        "logo": "https://example.com/logo.jpg",
+        "nombre": "Negocio 1",
+        "descripcion": "Descripción completa del negocio",
+        "facebook": "https://facebook.com/negocio1",
+        "instagram": "https://instagram.com/negocio1",
+        "twitter": "https://twitter.com/negocio1",
+        "correo": "contacto@negocio1.com",
+        "celular": "+1234567890"
+    }
+}
+        </pre>
+        <li><strong>Errores posibles:</strong></li>
+        <ul>
+            <li><strong><code>404 Not Found:</code></strong> Si no se encuentra un negocio con el ID proporcionado.
+                <pre><code>{
+    "error": "Negocio no encontrado"
+}</code></pre>
+            </li>
+            <li><strong><code>500 Internal Server Error:</code></strong> En caso de error en la base de datos o el servidor.
+                <pre><code>{
+    "error": "Error al obtener el negocio"
+}</code></pre>
+            </li>
+        </ul>
+    </ul>
+</details>
+
+<details>
+    <summary>GET /api/v1/negocio-redes-sociales</summary>
+    <ul>
+        <li><strong>Descripción:</strong> Obtiene las redes sociales de todos los negocios.</li>
+        <li><strong>Instrucciones:</strong> No se requieren parámetros adicionales.</li>
+        <li><strong>Ejemplo de respuesta:</strong></li>
+        <pre>
+[
+    {
+        "facebook": "https://facebook.com/negocio1",
+        "instagram": "https://instagram.com/negocio1",
+        "twitter": "https://twitter.com/negocio1",
+        "correo": "contacto@negocio1.com",
+        "celular": "+1234567890"
+    },
+    {
+        "facebook": "https://facebook.com/negocio2",
+        "instagram": "https://instagram.com/negocio2",
+        "twitter": "https://twitter.com/negocio2",
+        "correo": "contacto@negocio2.com",
+        "celular": "+9876543210"
+    }
+]
+        </pre>
+        <li><strong>Errores posibles:</strong></li>
+        <ul>
+            <li><strong><code>500 Internal Server Error:</code></strong> En caso de error en la base de datos o el servidor.
+                <pre><code>{
+    "error": "Error al obtener las redes sociales del negocio"
+}</code></pre>
+            </li>
+        </ul>
+    </ul>
+</details>
+
+<details>
+    <summary>PUT /api/v1/negocio/:id</summary>
+    <ul>
+        <li><strong>Descripción:</strong> Actualiza los detalles de un negocio específico.</li>
+        <li><strong>Instrucciones:</strong> Proporciona el <code>id</code> del negocio en la URL y envía un objeto JSON con los campos a modificar. Si se desea actualizar el logo, envíalo como parte del formulario <code>multipart/form-data</code>.</li>
+        <li><strong>Ejemplo de solicitud:</strong></li>
+        <pre>
+PUT /api/v1/negocios/1
+Content-Type: multipart/form-data
+
+{
+    "nombre": "Negocio actualizado",
+    "descripcion": "Nueva descripción",
+    "facebook": "https://facebook.com/negocio1",
+    "instagram": "https://instagram.com/negocio1",
+    "twitter": "https://twitter.com/negocio1",
+    "celular": "+1122334455",
+    "correo": "nuevo@negocio.com",
+    "logo": "nuevo-logo.jpg"
+}
+        </pre>
+        <li><strong>Ejemplo de respuesta:</strong></li>
+        <pre>{
+    "message": "Negocio actualizado exitosamente"
+}</pre>
+        <li><strong>Errores posibles:</strong></li>
+        <ul>
+            <li><strong><code>400 Bad Request:</code></strong> Si faltan campos obligatorios.
+                <pre><code>{
+    "error": "El nombre de la categoría es obligatorio."
+}</code></pre>
+            </li>
+            <li><strong><code>500 Internal Server Error:</code></strong> En caso de error en el servidor o la base de datos.
+                <pre><code>{
+    "error": "Error al actualizar el negocio"
+}</code></pre>
+            </li>
+        </ul>
+    </ul>
+</details>

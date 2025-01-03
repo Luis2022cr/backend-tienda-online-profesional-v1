@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Iniciar sesión</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #000000;
+        color: #ffffff;
+      }
+      .login-container {
+        max-width: 300px;
+        margin: 100px auto;
+        padding: 20px;
+        background-color: #333;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px 0px #000;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        color: #ffffff;
+      }
+      input[type='text'],
+      input[type='password'] {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+        border: none;
+      }
+      button {
+        width: 100%;
+        padding: 10px;
+        background-color: #4a90e2;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #357abd;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <h1>Iniciar sesión</h1>
+      <form action="/login" method="POST">
+        <label for="username">Usuario</label>
+        <input type="text" id="username" name="username" required />
+
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" name="password" required />
+
+        <button type="submit">Iniciar sesión</button>
+      </form>
+    </div>
+  </body>
+</html>

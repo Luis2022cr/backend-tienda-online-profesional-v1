@@ -1,0 +1,56 @@
+<h2>Endpoints de Usuario</h2>
+
+              <details>
+                <summary>GET /api/v1/usuario/perfil</summary>
+                <ul>
+                  <li><strong>Descripción:</strong> Obtiene los detalles del perfil del usuario actualmente autenticado.
+                  </li>
+                  <li><strong>Instrucciones:</strong> El token de autorización debe estar presente en el encabezado
+                    <code>Authorization</code> en el formato <code>Bearer <token></code>. No se requieren parámetros
+                    adicionales en la solicitud.
+                  </li>
+                  <li><strong>Ejemplo de solicitud:</strong></li>
+                  <pre>
+GET /api/v1/usuario/perfil
+Authorization: Bearer <tu_token_aqui>
+    </pre>
+                  <li><strong>Ejemplo de respuesta:</strong></li>
+                  <pre>
+{
+  "id": "12345",
+  "nombre_usuario": "johndoe",
+  "correo": "johndoe@example.com",
+  "nombre": "John",
+  "apellido": "Doe",
+  "rol_nombre": "Admin",
+  "fecha_creacion": "2024-09-05T12:34:56Z"
+}
+    </pre>
+                  <li><strong>Errores posibles:</strong></li>
+                  <ul>
+                    <li><strong><code>401 Unauthorized:</code></strong> Si el token de autorización no está presente o
+                      es inválido.
+                      <pre><code>
+{
+  "error": "Acceso no autorizado"
+}
+        </code></pre>
+                    </li>
+                    <li><strong><code>404 Not Found:</code></strong> Si el usuario no se encuentra en la base de datos.
+                      <pre><code>
+{
+  "error": "Usuario no encontrado"
+}
+        </code></pre>
+                    </li>
+                    <li><strong><code>500 Internal Server Error:</code></strong> Si hay un problema con la base de datos
+                      o el servidor.
+                      <pre><code>
+{
+  "error": "Error al obtener el usuario"
+}
+        </code></pre>
+                    </li>
+                  </ul>
+                </ul>
+              </details>

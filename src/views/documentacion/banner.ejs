@@ -1,0 +1,177 @@
+<h2>Endpoints de Banners</h2>
+
+<details>
+    <summary>GET /api/v1/banners</summary>
+    <ul>
+        <li><strong>Descripción:</strong> Obtiene una lista de todos los banners.</li>
+        <li><strong>Instrucciones:</strong> No se requieren parámetros adicionales.</li>
+        <li><strong>Ejemplo de respuesta:</strong></li>
+        <pre>
+            [
+              {
+                "id": 1,
+                "nombre": "Banner Principal",
+                "imagen": "https://res.cloudinary.com/dxc3qadsk/image/upload/v1725512944/banner_principal.jpg",
+                "link": "https://example.com/promo"
+              },
+             ...............
+            ]
+                </pre>
+        <li><strong>Errores posibles:</strong></li>
+        <ul>
+            <li><strong><code>500 Internal Server Error:</code></strong> Si hay un problema con la base de datos o
+                el servidor.
+                <pre><code>
+            {
+              "error": "Error fetching banners"
+            }
+                    </code></pre>
+            </li>
+        </ul>
+    </ul>
+</details>
+
+<details>
+    <summary>GET /api/v1/banners/:id</summary>
+    <ul>
+        <li><strong>Descripción:</strong> Obtiene los detalles de un banner específico utilizando su
+            <code>id</code>.
+        </li>
+        <li><strong>Instrucciones:</strong> Se debe proporcionar el <code>id</code> del banner en la URL.</li>
+        <li><strong>Ejemplo de respuesta:</strong></li>
+        <pre>
+            {
+              "id": 1,
+              "nombre": "Banner Principal",
+              "imagen": "https://res.cloudinary.com/dxc3qadsk/image/upload/v1725512944/banner_principal.jpg",
+              "link": "https://example.com/promo"
+            }
+                </pre>
+        <li><strong>Errores posibles:</strong></li>
+        <ul>
+            <li><strong><code>404 Not Found:</code></strong> Si no se encuentra un banner con el <code>id</code>
+                proporcionado.
+                <pre><code>
+            {
+              "error": "Banner no encontrado"
+            }
+                    </code></pre>
+            </li>
+        </ul>
+    </ul>
+</details>
+
+<details>
+    <summary>POST /api/v1/banners</summary>
+    <ul>
+        <li><strong>Descripción:</strong> Crea un nuevo banner con nombre, imagen y link.</li>
+        <li><strong>Instrucciones:</strong> Envía un objeto JSON con los detalles del banner y un archivo de
+            imagen.</li>
+        <li><strong>Ejemplo de solicitud:</strong></li>
+        <pre>
+            POST /api/v1/banners
+            Content-Type: multipart/form-data
+            
+            {
+              "nombre": "Nuevo Banner",
+              "imagen": "archivo-imagen.jpg",
+              "link": "https://example.com/nuevo"
+            }
+                </pre>
+        <li><strong>Ejemplo de respuesta:</strong></li>
+        <pre>
+            {
+              "message": "Banner creado exitosamente"
+            }
+                </pre>
+        <li><strong>Errores posibles:</strong></li>
+        <ul>
+            <li><strong><code>400 Bad Request:</code></strong> Si falta algún campo obligatorio como el nombre o
+                la imagen.
+                <pre><code>
+            {
+              "error": "Nombre, imagen y link son obligatorios."
+            }
+                    </code></pre>
+            </li>
+            <li><strong><code>500 Internal Server Error:</code></strong> Si ocurre un problema con la base de
+                datos o el archivo de imagen.
+                <pre><code>
+            {
+              "error": "Error al crear el banner"
+            }
+                    </code></pre>
+            </li>
+        </ul>
+    </ul>
+</details>
+
+<details>
+    <summary>PUT /api/v1/banners/:id</summary>
+    <ul>
+        <li><strong>Descripción:</strong> Actualiza un banner existente, permitiendo modificar nombre, imagen y
+            link.</li>
+        <li><strong>Instrucciones:</strong> Proporciona el <code>id</code> del banner a actualizar en la URL y
+            envía un objeto JSON con los campos a modificar.</li>
+        <li><strong>Ejemplo de solicitud:</strong></li>
+        <pre>
+            PUT /api/v1/banners/1
+            Content-Type: multipart/form-data
+            
+            {
+              "nombre": "Banner Actualizado",
+              "imagen": "nueva-imagen.jpg",
+              "link": "https://example.com/actualizado"
+            }
+                </pre>
+        <li><strong>Ejemplo de respuesta:</strong></li>
+        <pre>
+            {
+              "message": "Banner actualizado exitosamente"
+            }
+                </pre>
+        <li><strong>Errores posibles:</strong></li>
+        <ul>
+            <li><strong><code>400 Bad Request:</code></strong> Si falta algún campo obligatorio.
+                <pre><code>
+            {
+              "error": "El nombre y la imagen son obligatorios."
+            }
+                    </code></pre>
+            </li>
+            <li><strong><code>500 Internal Server Error:</code></strong> Si ocurre un problema durante la
+                actualización.
+                <pre><code>
+            {
+              "error": "Error al actualizar el banner"
+            }
+                    </code></pre>
+            </li>
+        </ul>
+    </ul>
+</details>
+
+<details>
+    <summary>DELETE /api/v1/banners/:id</summary>
+    <ul>
+        <li><strong>Descripción:</strong> Elimina un banner por su <code>id</code>.</li>
+        <li><strong>Instrucciones:</strong> Proporciona el <code>id</code> del banner en la URL.</li>
+        <li><strong>Ejemplo de respuesta:</strong></li>
+        <pre>
+            {
+              "message": "Banner eliminado exitosamente"
+            }
+                </pre>
+        <li><strong>Errores posibles:</strong></li>
+        <ul>
+            <li><strong><code>500 Internal Server Error:</code></strong> Si el banner está asociado a otros
+                registros o hay un error en el servidor.
+                <pre><code>
+            {
+              "error": "Error al eliminar el banner"
+            }
+                    </code></pre>
+            </li>
+        </ul>
+    </ul>
+</details>
