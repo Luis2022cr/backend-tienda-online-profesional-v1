@@ -76,7 +76,7 @@ app.post('/login', async (req: Request, res: Response) => {
   try {
     // Consulta a la base de datos para obtener el usuario
     const resultados = await client.execute({
-      sql: 'SELECT * FROM usuarios WHERE nombre_usuario = ?',
+      sql: 'SELECT * FROM usuarios WHERE usuario = ?',
       args: [username],
     });
 
@@ -163,6 +163,7 @@ const upload = multer({
 }).fields([
     { name: 'imagen_principal', maxCount: 1 },
     { name: 'imagenes_adicionales[]', maxCount: 10 },
+    { name: 'file', maxCount: 1 },
 ]);
 
 //direcciones con los respectvios routes

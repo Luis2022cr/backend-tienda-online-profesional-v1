@@ -72,8 +72,9 @@ export const getRedesSocialesNegocio = async (req: Request, res: Response): Prom
 export const actualizarnegocio = async (req: Request, res: Response): Promise<void> => {
     const negocioId = req.params.id;
     const { nombre, descripcion, facebook, instagram, twitter, celular, correo } = req.body;
-    const file = req.file as Express.Multer.File | undefined;
-
+    const file = req.files && typeof req.files === 'object' && 'file' in req.files
+    ? (req.files['file'] as Express.Multer.File[])[0]
+    : undefined; 
     try {
         // Validar los campos obligatorios
         validacionesObligatorias({ negocioId, nombre, descripcion, celular, correo }, ['negocioId', 'nombre', 'descripcion']);

@@ -1,235 +1,230 @@
 <h2>Endpoints de Productos</h2>
 
 <details>
-    <summary>GET /api/v1/productos</summary>
+    <summary>POST /productos</summary>
     <ul>
-        <li><strong>Descripción:</strong> Obtiene una lista de todos los productos con sus detalles y categorías
-            asociadas.</li>
-        <li><strong>Instrucciones:</strong> No se requieren parámetros adicionales.</li>
-        <li><strong>Ejemplo de respuesta:</strong></li>
-        <pre>
-          [
-                {
-                  "id": "c33c9cdb-3d47-48c6-840b-c4c69cd369ba",
-                  "nombre": "pruebaw1sms",
-                  "descripcion": "descripcion",
-                  "stock": 10,
-                  "precio": 100,
-                  "imagen": "https://res.cloudinary.com/dxc3qadsk/image/upload/v1725512944/file_rru8ae.jpg",
-                  "slug": "pruebaw1sms",
-                  "fecha_creacion": "2024-09-05 05:09:05",
-                  "detalles": [
-                    {
-                      "id": "b7238f59-372f-4a09-b531-1820624329b3",
-                      "producto_id": "c33c9cdb-3d47-48c6-840b-c4c69cd369ba",
-                      "especificacion": "Especificación 1",
-                      "valor": "Valor 1"
-                    }
-                  ],
-                  "categoria": {
-                    "id": "54011591-4a21-4788-aa96-30099e93981f",
-                    "nombre": "update prueba 2",
-                    "descripcion": "sasdsd",
-                    "imagen": "https://res.cloudinary.com/dxc3qadsk/image/upload/v1725510557/file_hfap51.jpg",
-                    "slug": "update-prueba-2"
-                  }
-                },
-                
-                ........
-          ]
-              </pre>
-        <li><strong>Errores posibles:</strong></li>
-        <ul>
-            <li><strong><code>500 Internal Server Error:</code></strong> Si hay un problema con la base de datos o
-                el servidor.
-                <pre><code>
-        {
-            "error": "Error fetching products with details"
-        }
-          </code></pre>
-            </li>
-        </ul>
-    </ul>
-</details>
-
-<details>
-    <summary>GET /api/v1/productos/:id</summary>
-    <ul>
-        <li><strong>Descripción:</strong> Obtiene los detalles de un producto específico utilizando su
-            <code>id</code>.
-        </li>
-        <li><strong>Instrucciones:</strong> Se debe proporcionar el <code>id</code> del producto en la URL.</li>
-        <li><strong>Ejemplo de respuesta:</strong></li>
-        <pre>
-                {
-                  "id": "c732baaa-1321-4496-858c-c8495355a903",
-                  "nombre": "pruebaw1smsx",
-                  "descripcion": "descripcion",
-                  "stock": 10,
-                  "precio": 100,
-                  "imagen": "https://res.cloudinary.com/dxc3qadsk/image/upload/v1725513053/file_tolddp.jpg",
-                  "slug": "pruebaw1smsx",
-                  "fecha_creacion": "2024-09-05 05:10:54",
-                  "detalles": [
-                    {
-                      "id": "7187a725-5124-47e7-90ac-6d39ef14dbab",
-                      "especificacion": "Especificación 1",
-                      "valor": "Valor 1"
-                    },
-                    {
-                      "id": "3c046fd0-6bef-45b6-807c-aaeb29e90704",
-                      "especificacion": "Especificación 1",
-                      "valor": "Valor 1"
-                    }
-                  ],
-                  "categoria": {
-                    "id": "54011591-4a21-4788-aa96-30099e93981f",
-                    "nombre": "update prueba 2",
-                    "descripcion": "sasdsd",
-                    "imagen": "https://res.cloudinary.com/dxc3qadsk/image/upload/v1725510557/file_hfap51.jpg",
-                    "slug": "update-prueba-2"
-                  }
-                }
-              </pre>
-        <li><strong>Errores posibles:</strong></li>
-        <ul>
-            <li><strong><code>404 Not Found:</code></strong> Si no se encuentra un producto con el <code>id</code>
-                proporcionado.
-                <pre><code>
-        {
-            "error": "Producto no encontrado"
-        }
-          </code></pre>
-            </li>
-        </ul>
-    </ul>
-</details>
-
-<details>
-    <summary>POST /api/v1/productos</summary>
-    <ul>
-        <li><strong>Descripción:</strong> Crea un nuevo producto con nombre, descripción, imagen y detalles.</li>
-        <li><strong>Instrucciones:</strong> Envía un objeto JSON con los detalles del producto y un archivo de
-            imagen.</li>
+        <li><strong>Descripción:</strong> Crea un nuevo producto con su categoría, nombre, descripción, stock, precio, variantes e imágenes adicionales.</li>
+        <li><strong>Instrucciones:</strong> Envía un objeto JSON con los detalles del producto y los archivos de imagen correspondientes.</li>
         <li><strong>Ejemplo de solicitud:</strong></li>
         <pre>
-          POST /api/v1/productos
-          Content-Type: multipart/form-data
-          
-          {
-            "nombre": "Producto Nuevo",
-            "descripcion": "Descripción del producto nuevo",
-            "stock": 10,
-            "precio": 100,
-            "categoria_id": "categoria-id-1",
-            "imagen": "archivo-imagen.jpg",
-            "detalles": [
-              {
-                "especificacion": "Color",
-                "valor": "Rojo"
-              },
-              {
-                "especificacion": "Tamaño",
-                "valor": "Grande"
-              }
-            ]
-          }
-              </pre>
+            POST /productos
+            Content-Type: multipart/form-data
+
+            {
+              "categoria_id": "1",
+              "nombre": "Producto Nuevo",
+              "descripcion": "Descripción detallada del producto.",
+              "stock": 100,
+              "precio": 20.0,
+              "tiene_variantes": false,
+              "variantes": "[]",
+              "imagen_principal": "archivo-imagen.jpg",
+              "imagenes_adicionales[]": ["archivo-imagen2.jpg", "archivo-imagen3.jpg"]
+            }
+        </pre>
         <li><strong>Ejemplo de respuesta:</strong></li>
         <pre>
-        {
-            "message": "Producto creado exitosamente"
-        }
+            {
+              "message": "Producto creado exitosamente"
+            }
         </pre>
         <li><strong>Errores posibles:</strong></li>
         <ul>
-            <li><strong><code>400 Bad Request:</code></strong> Si falta algún campo obligatorio como el nombre o la
-                categoría.
+            <li><strong><code>400 Bad Request:</code></strong> Si falta algún campo obligatorio o el formato de variantes es incorrecto.
                 <pre><code>
-        {
-            "error": "Categoría y nombre son obligatorios."
-        }
-          </code></pre>
+            {
+              "error": "El campo nombre, precio y categoría son obligatorios."
+            }
+                </code></pre>
             </li>
-            <li><strong><code>500 Internal Server Error:</code></strong> Si ocurre un problema con la base de datos
-                o Cloudinary.
+            <li><strong><code>500 Internal Server Error:</code></strong> Si ocurre un problema con la base de datos o la subida de imágenes.
                 <pre><code>
-        {
-            "error": "Error al crear el producto"
-        }
-          </code></pre>
+            {
+              "error": "Error al crear el producto"
+            }
+                </code></pre>
             </li>
         </ul>
     </ul>
 </details>
 
 <details>
-    <summary>PUT /api/v1/productos/:id</summary>
+    <summary>GET /productos</summary>
     <ul>
-        <li><strong>Descripción:</strong> Actualiza un producto existente, permitiendo modificar nombre,
-            descripción, imagen y detalles.</li>
-        <li><strong>Instrucciones:</strong> Proporciona el <code>id</code> del producto a actualizar en la URL y
-            envía un objeto JSON con los campos a modificar.</li>
-        <li><strong>Ejemplo de solicitud:</strong></li>
-        <pre>
-          PUT /api/v1/productos/producto-id-1
-          Content-Type: multipart/form-data
-          
-          {
-            "categoria_id": "cat-001",
-            "nombre": "Producto Actualizado",
-            "descripcion": "Descripción actualizada",
-            "stock": 15,
-            "precio": 200.00
-          }
-              </pre>
+        <li><strong>Descripción:</strong> Obtiene una lista de todos los productos, junto con su categoría, variantes e imágenes asociadas.</li>
+        <li><strong>Instrucciones:</strong> No se requieren parámetros adicionales.</li>
         <li><strong>Ejemplo de respuesta:</strong></li>
         <pre>
-        {
-            "message": "Producto actualizado exitosamente"
-        }
+            [
+              {
+                "id": "12345",
+                "nombre": "Producto 1",
+                "descripcion": "Descripción del producto 1",
+                "stock": 100,
+                "precio": 20.0,
+                "imagen_principal": "url_imagen_principal",
+                "slug": "producto-1",
+                "tiene_variantes": false,
+                "categoria": {
+                  "nombre": "Categoría 1",
+                  "descripcion": "Descripción de la categoría 1",
+                  "slug": "categoria-1"
+                },
+                "variantes": [],
+                "imagenes_adicionales": []
+              }
+            ]
+        </pre>
+        <li><strong>Errores posibles:</strong></li>
+        <ul>
+            <li><strong><code>500 Internal Server Error:</code></strong> Si hay un problema con la base de datos o el servidor.
+                <pre><code>
+            {
+              "error": "Error al obtener los productos"
+            }
+                </code></pre>
+            </li>
+        </ul>
+    </ul>
+</details>
+
+<details>
+    <summary>GET /productos/:slug</summary>
+    <ul>
+        <li><strong>Descripción:</strong> Obtiene los detalles de un producto específico utilizando su <code>slug</code>.</li>
+        <li><strong>Instrucciones:</strong> Se debe proporcionar el <code>slug</code> del producto en la URL.</li>
+        <li><strong>Ejemplo de solicitud:</strong></li>
+        <pre>
+            GET /productos/producto-1
+        </pre>
+        <li><strong>Ejemplo de respuesta:</strong></li>
+        <pre>
+            {
+              "id": "12345",
+              "nombre": "Producto 1",
+              "descripcion": "Descripción del producto 1",
+              "stock": 100,
+              "precio": 20.0,
+              "imagen_principal": "url_imagen_principal",
+              "slug": "producto-1",
+              "tiene_variantes": false,
+              "categoria": {
+                "nombre": "Categoría 1",
+                "descripcion": "Descripción de la categoría 1",
+                "slug": "categoria-1"
+              },
+              "variantes": [],
+              "imagenes_adicionales": []
+            }
+        </pre>
+        <li><strong>Errores posibles:</strong></li>
+        <ul>
+            <li><strong><code>404 Not Found:</code></strong> Si no se encuentra un producto con el <code>slug</code> proporcionado.
+                <pre><code>
+            {
+              "error": "Producto no encontrado"
+            }
+                </code></pre>
+            </li>
+        </ul>
+    </ul>
+</details>
+
+<details>
+    <summary>GET /productos/tarjeta</summary>
+    <ul>
+        <li><strong>Descripción:</strong> Obtiene una lista de productos en formato simplificado, ideal para mostrar en tarjetas.</li>
+        <li><strong>Instrucciones:</strong> No se requieren parámetros adicionales, aunque se puede filtrar por categoría mediante el parámetro <code>categoria_slug</code>.</li>
+        <li><strong>Ejemplo de respuesta:</strong></li>
+        <pre>
+            [
+              {
+                "nombre": "Producto 1",
+                "producto_slug": "producto-1",
+                "precio": 20.0,
+                "imagen": "url_imagen_principal",
+                "categoria_nombre": "Categoría 1",
+                "categoria_slug": "categoria-1"
+              }
+            ]
+        </pre>
+        <li><strong>Errores posibles:</strong></li>
+        <ul>
+            <li><strong><code>500 Internal Server Error:</code></strong> Si hay un problema con la base de datos o el servidor.
+                <pre><code>
+            {
+              "error": "Error al obtener los productos para tarjetas"
+            }
+                </code></pre>
+            </li>
+        </ul>
+    </ul>
+</details>
+
+<details>
+    <summary>PUT /productos/:id</summary>
+    <ul>
+        <li><strong>Descripción:</strong> Actualiza un producto existente, permitiendo modificar su nombre, descripción, stock, precio e imagen.</li>
+        <li><strong>Instrucciones:</strong> Proporciona el <code>id</code> del producto a actualizar en la URL y un objeto JSON con los campos a modificar.</li>
+        <li><strong>Ejemplo de solicitud:</strong></li>
+        <pre>
+            PUT /productos/12345
+            Content-Type: multipart/form-data
+
+            {
+              "categoria_id": "2",
+              "nombre": "Producto Actualizado",
+              "descripcion": "Descripción actualizada",
+              "stock": 150,
+              "precio": 25.0,
+              "imagen_principal": "archivo-imagen-actualizada.jpg"
+            }
+        </pre>
+        <li><strong>Ejemplo de respuesta:</strong></li>
+        <pre>
+            {
+              "message": "Producto actualizado exitosamente"
+            }
         </pre>
         <li><strong>Errores posibles:</strong></li>
         <ul>
             <li><strong><code>400 Bad Request:</code></strong> Si falta algún campo obligatorio.
                 <pre><code>
-        {
-            "error": "El nombre y descripción son obligatorios."
-        }
-        </code></pre>
+            {
+              "error": "El nombre y la imagen son obligatorios."
+            }
+                </code></pre>
             </li>
-            <li><strong><code>500 Internal Server Error:</code></strong> Si ocurre un problema durante la
-                actualización.
+            <li><strong><code>500 Internal Server Error:</code></strong> Si ocurre un problema durante la actualización.
                 <pre><code>
-        {
-            "error": "Error al actualizar el producto"
-        }
-        </code></pre>
+            {
+              "error": "Error al actualizar el producto"
+            }
+                </code></pre>
             </li>
         </ul>
     </ul>
 </details>
 
 <details>
-    <summary>DELETE /api/v1/productos/:id</summary>
+    <summary>DELETE /productos/:id</summary>
     <ul>
         <li><strong>Descripción:</strong> Elimina un producto por su <code>id</code>.</li>
         <li><strong>Instrucciones:</strong> Proporciona el <code>id</code> del producto en la URL.</li>
         <li><strong>Ejemplo de respuesta:</strong></li>
         <pre>
-        {
-            "message": "Producto eliminado exitosamente"
-        }
+            {
+              "message": "Producto eliminado exitosamente"
+            }
         </pre>
         <li><strong>Errores posibles:</strong></li>
         <ul>
-            <li><strong><code>500 Internal Server Error:</code></strong> Si el producto está asociado a otros
-                registros o hay un error en el servidor.
+            <li><strong><code>500 Internal Server Error:</code></strong> Si el producto está asociado a otros registros o hay un error en el servidor.
                 <pre><code>
-        {
-            "error": "Error al eliminar el producto"
-        }
-        </code></pre>
+            {
+              "error": "Error al eliminar el producto"
+            }
+                </code></pre>
             </li>
         </ul>
     </ul>

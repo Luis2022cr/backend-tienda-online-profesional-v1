@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { v4 as uuidv4 } from 'uuid'; // Importar uuidv4 desde uuid
 import client from '../db/turso';
 
 // Obtener todas las categorías
@@ -37,18 +36,13 @@ export const getCategoriaPorSlug = async (req: Request, res: Response): Promise<
     }
 };
 
-// Función para generar un slug a partir del nombre
-const generateSlug = (name: string): string => {
-    return name
-        .toLowerCase()
-        .trim()
-        .replace(/[\s\W-]+/g, '-');
-};
 
 // Crear una nueva categoría
 export const crearCategoria = async (req: Request, res: Response): Promise<void> => {
     const { nombre, descripcion } = req.body;
-    const file = req.file as Express.Multer.File | undefined;
+    const file = req.files && typeof req.files === 'object' && 'file' in req.files
+    ? (req.files['file'] as Express.Multer.File[])[0]
+    : undefined; 
 
     try {
         validacionesObligatorias({ nombre,descripcion, file }, ['nombre', 'descripcion', 'file']);
@@ -66,7 +60,7 @@ export const crearCategoria = async (req: Request, res: Response): Promise<void>
         
         const imageUrl = await subiryConvetirR2(file, 'categorias');
         
-        const id = uuidv4();
+         const id = generateId('cat'); // Generar un ID único para la variante
         const slug = generateSlug(nombre);
 
         await executeQuery(
@@ -88,18 +82,11 @@ export const crearCategoria = async (req: Request, res: Response): Promise<void>
 export const updateCategory = async (req: Request, res: Response): Promise<void> => {
     const categoryId = req.params.id;
     const { nombre, descripcion } = req.body;
-    const file = req.file as Express.Multer.File | undefined;
-
+    const file = req.files && typeof req.files === 'object' && 'file' in req.files
+    ? (req.files['file'] as Express.Multer.File[])[0]
+    : undefined; 
     try {
         validacionesObligatorias({ nombre,descripcion }, ['nombre', 'descripcion']);
-        
-        
-        // await verificarExisteEnDb(
-        //     'categorias',
-        //     'nombre',
-        //     nombre,
-        //     'Ya existe una categoría con ese nombre.'
-        // );
         
         let imageUrl: string | undefined;
         if (file) {
@@ -136,6 +123,8 @@ import { validacionesObligatorias } from '../utils/validaciones';
 import { subiryConvetirR2 } from '../services/r2Service';
 import { verificarExisteEnDb } from '../services/existeDatoEnDb';
 import { r2Client } from '../utils/r2';
+import { generateSlug } from '../utils/generarSlug';
+import { generateId } from '../utils/GenerarIdTexto';
 
 export const deleteCategory = async (req: Request, res: Response): Promise<void> => {
     const categoryId = req.params.id;

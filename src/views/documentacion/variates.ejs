@@ -1,0 +1,173 @@
+<h2>Endpoints de Variantes</h2>
+
+<details>
+    <summary>GET /api/v1/variantes</summary>
+    <ul>
+        <li><strong>Descripción:</strong> Obtiene una lista de todas las variantes (solo campos importantes: id, nombre y slug).</li>
+        <li><strong>Instrucciones:</strong> No se requieren parámetros adicionales.</li>
+        <li><strong>Ejemplo de respuesta:</strong></li>
+        <pre>
+            {
+              "variantes": [
+                {
+                  "id": "variante-000001",
+                  "nombre": "Tamaño M",
+                  "slug": "tamano-m"
+                },
+                {
+                  "id": "variante-000002",
+                  "nombre": "Tamaño L",
+                  "slug": "tamano-l"
+                }
+              ]
+            }
+        </pre>
+        <li><strong>Errores posibles:</strong></li>
+        <ul>
+            <li><strong><code>500 Internal Server Error:</code></strong> Si ocurre un error al acceder a la base de datos.
+                <pre><code>
+            {
+              "error": "Error al obtener las variantes"
+            }
+                    </code></pre>
+            </li>
+        </ul>
+    </ul>
+</details>
+
+<details>
+    <summary>GET /api/v1/variantes/:slug</summary>
+    <ul>
+        <li><strong>Descripción:</strong> Obtiene una variante específica por su <code>slug</code> (solo campos importantes: id, nombre y slug).</li>
+        <li><strong>Instrucciones:</strong> Proporciona el <code>slug</code> de la variante en la URL.</li>
+        <li><strong>Ejemplo de respuesta:</strong></li>
+        <pre>
+            {
+              "variante": {
+                "id": "variante-000001",
+                "nombre": "Tamaño M",
+                "slug": "tamano-m"
+              }
+            }
+        </pre>
+        <li><strong>Errores posibles:</strong></li>
+        <ul>
+            <li><strong><code>404 Not Found:</code></strong> Si no se encuentra una variante con el <code>slug</code> proporcionado.
+                <pre><code>
+            {
+              "error": "Variante no encontrada"
+            }
+                    </code></pre>
+            </li>
+            <li><strong><code>500 Internal Server Error:</code></strong> Si ocurre un error al acceder a la base de datos.
+                <pre><code>
+            {
+              "error": "Error al obtener la variante por slug"
+            }
+                    </code></pre>
+            </li>
+        </ul>
+    </ul>
+</details>
+
+<details>
+    <summary>POST /api/v1/variantes</summary>
+    <ul>
+        <li><strong>Descripción:</strong> Crea una nueva variante proporcionando un nombre.</li>
+        <li><strong>Instrucciones:</strong> Envía un objeto JSON con el campo <code>nombre</code> en el cuerpo de la solicitud.</li>
+        <li><strong>Ejemplo de solicitud:</strong></li>
+        <pre>
+            POST /api/v1/variantes
+            Content-Type: application/json
+            
+            {
+              "nombre": "Tamaño XL"
+            }
+        </pre>
+        <li><strong>Ejemplo de respuesta:</strong></li>
+        <pre>
+            {
+              "message": "Variante creada exitosamente",
+              "id": "variante-000003"
+            }
+        </pre>
+        <li><strong>Errores posibles:</strong></li>
+        <ul>
+            <li><strong><code>400 Bad Request:</code></strong> Si no se proporciona el campo <code>nombre</code> o si ya existe una variante con ese <code>slug</code>.
+                <pre><code>
+            {
+              "error": "Los campos 'nombre' y 'slug' son obligatorios"
+            }
+                    </code></pre>
+            </li>
+            <li><strong><code>400 Bad Request:</code></strong> Si ya existe una variante con el mismo <code>slug</code>.
+                <pre><code>
+            {
+              "error": "Ya existe una variante con ese slug"
+            }
+                    </code></pre>
+            </li>
+            <li><strong><code>500 Internal Server Error:</code></strong> Si ocurre un error al crear la variante.
+                <pre><code>
+            {
+              "error": "Error al crear la variante"
+            }
+                    </code></pre>
+            </li>
+        </ul>
+    </ul>
+</details>
+
+<details>
+    <summary>PUT /api/v1/variantes/:slug</summary>
+    <ul>
+        <li><strong>Descripción:</strong> Actualiza una variante existente por su <code>slug</code>.</li>
+        <li><strong>Instrucciones:</strong> Proporciona el <code>slug</code> de la variante en la URL y el nuevo nombre en el cuerpo de la solicitud.</li>
+        <li><strong>Ejemplo de solicitud:</strong></li>
+        <pre>
+            PUT /api/v1/variantes/tamano-m
+            Content-Type: application/json
+            
+            {
+              "nombre": "Tamaño XL"
+            }
+        </pre>
+        <li><strong>Ejemplo de respuesta:</strong></li>
+        <pre>
+            {
+              "message": "Variante actualizada exitosamente"
+            }
+        </pre>
+        <li><strong>Errores posibles:</strong></li>
+        <ul>
+            <li><strong><code>404 Not Found:</code></strong> Si no se encuentra una variante con el <code>slug</code> proporcionado.
+                <pre><code>
+            {
+              "error": "Variante no encontrada"
+            }
+                    </code></pre>
+            </li>
+            <li><strong><code>400 Bad Request:</code></strong> Si no se proporciona el campo <code>nombre</code> o si ya existe una variante con el nuevo <code>slug</code>.
+                <pre><code>
+            {
+              "error": "Los campos 'nombre' y 'nuevoSlug' son obligatorios"
+            }
+                    </code></pre>
+            </li>
+            <li><strong><code>400 Bad Request:</code></strong> Si ya existe una variante con el nuevo <code>slug</code>.
+                <pre><code>
+            {
+              "error": "Ya existe una variante con ese nuevo slug"
+            }
+                    </code></pre>
+            </li>
+            <li><strong><code>500 Internal Server Error:</code></strong> Si ocurre un error al actualizar la variante.
+                <pre><code>
+            {
+              "error": "Error al actualizar la variante"
+            }
+                    </code></pre>
+            </li>
+        </ul>
+    </ul>
+</details>

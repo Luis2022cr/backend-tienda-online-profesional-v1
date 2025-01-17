@@ -1,0 +1,82 @@
+<h2>Endpoints de Variantes de Producto</h2>
+
+<details>
+    <summary>POST /api/v1/productos/:slug/variantes</summary>
+    <ul>
+        <li><strong>Descripción:</strong> Modifica las variantes de un producto (crear, actualizar o eliminar) utilizando su <code>slug</code> y la acción correspondiente.</li>
+        <li><strong>Instrucciones:</strong> Proporciona el <code>slug</code> del producto en la URL y los datos necesarios en el cuerpo de la solicitud (ID de variante, valor, precio, stock y acción).</li>
+        <li><strong>Ejemplo de solicitud para crear una variante:</strong></li>
+        <pre>
+            POST /api/v1/productos/mi-producto/variantes
+            Content-Type: application/json
+            
+            {
+              "id": "12345",
+              "valor": "Tamaño M",
+              "precio": 199.99,
+              "stock": 50,
+              "accion": "crear"
+            }
+        </pre>
+        <li><strong>Ejemplo de solicitud para actualizar una variante:</strong></li>
+        <pre>
+            POST /api/v1/productos/mi-producto/variantes
+            Content-Type: application/json
+            
+            {
+              "id": "12345",
+              "valor": "Tamaño L",
+              "precio": 209.99,
+              "stock": 45,
+              "accion": "actualizar"
+            }
+        </pre>
+        <li><strong>Ejemplo de solicitud para eliminar una variante:</strong></li>
+        <pre>
+            POST /api/v1/productos/mi-producto/variantes
+            Content-Type: application/json
+            
+            {
+              "id": "12345",
+              "accion": "eliminar"
+            }
+        </pre>
+        <li><strong>Ejemplo de respuesta:</strong></li>
+        <pre>
+            {
+              "message": "Variantes del producto modificadas exitosamente"
+            }
+        </pre>
+        <li><strong>Errores posibles:</strong></li>
+        <ul>
+            <li><strong><code>400 Bad Request:</code></strong> Si falta algún campo obligatorio o la acción no es válida.
+                <pre><code>
+            {
+              "error": "Se requiere el ID de la variante y la acción (crear, actualizar o eliminar)"
+            }
+                    </code></pre>
+            </li>
+            <li><strong><code>404 Not Found:</code></strong> Si el producto no existe.
+                <pre><code>
+            {
+              "error": "El producto no existe"
+            }
+                    </code></pre>
+            </li>
+            <li><strong><code>400 Bad Request:</code></strong> Si los datos para crear o actualizar la variante son incompletos.
+                <pre><code>
+            {
+              "error": "Datos incompletos para crear una variante"
+            }
+                    </code></pre>
+            </li>
+            <li><strong><code>500 Internal Server Error:</code></strong> Si ocurre un error con la base de datos o en la ejecución de la acción.
+                <pre><code>
+            {
+              "error": "Error al modificar las variantes del producto"
+            }
+                    </code></pre>
+            </li>
+        </ul>
+    </ul>
+</details>

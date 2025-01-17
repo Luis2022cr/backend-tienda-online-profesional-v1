@@ -45,7 +45,9 @@ export const getBannerPorId = async (req: Request, res: Response): Promise<void>
 // Crear un nuevo banner
 export const crearBanner = async (req: Request, res: Response) => {
     const { nombre, link } = req.body;
-    const file = req.file as Express.Multer.File | undefined;
+    const file = req.files && typeof req.files === 'object' && 'file' in req.files
+    ? (req.files['file'] as Express.Multer.File[])[0]
+    : undefined; 
 
     try {
         validacionesObligatorias({ nombre, link, file }, ['nombre', 'link', 'file']);
@@ -88,8 +90,10 @@ export const crearBanner = async (req: Request, res: Response) => {
 export const actualizarBanner = async (req: Request, res: Response): Promise<void> => {
     const bannerId = req.params.id;
     const { nombre, link } = req.body;
-    const file = req.file as Express.Multer.File | undefined;
-
+ const file = req.files && typeof req.files === 'object' && 'file' in req.files
+    ? (req.files['file'] as Express.Multer.File[])[0]
+    : undefined; 
+    
     try {
         validacionesObligatorias({ bannerId, nombre, link }, ['bannerId', 'nombre', 'link']);
 

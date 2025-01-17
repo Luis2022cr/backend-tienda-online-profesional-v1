@@ -5,13 +5,6 @@ import nodemailer from 'nodemailer';
 import crypto from 'crypto';
 import client from '../db/turso';
 
-const transporter = nodemailer.createTransport({
-    service: 'gmail',  // Cambia 'hotmail' por 'Outlook' si tienes problemas
-    auth: {
-        user: process.env.OUTLOOK_USER,
-        pass: process.env.OUTLOOK_PASSWORD
-    }
-});
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
 export const register = async (req: Request, res: Response): Promise<void> => {
@@ -74,38 +67,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
             args: [id, usuario, correo, hashedPassword, nombre, apellido, role_id]
         });
 
-        // Contenido del correo de confirmación
-        const emailContent = `
-            <div style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
-                <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-                    <div style="background-color: #0078d4; color: #ffffff; padding: 20px; text-align: center;">
-                        <h1 style="margin: 0;">¡Registro exitoso en VOAE!</h1>
-                    </div>
-                    <div style="padding: 20px; color: #333333;">
-                        <p>Hola ${nombre},</p>
-                        <p>Te has registrado exitosamente en nuestro sistema con el nombre de usuario <strong>${usuario}</strong>.</p>
-                        <p>Por favor, inicia sesión con las credenciales proporcionadas durante el registro.</p>
-                        <p>Si tienes alguna pregunta, no dudes en contactarnos.</p>
-                        <p>Gracias,</p>
-                        <p>Equipo de soporte</p>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        try {
-            await transporter.sendMail({
-                from: process.env.OUTLOOK_USER,
-                to: correo,
-                subject: 'Confirmación de Registro en VOAE',
-                html: emailContent
-            });
-
-            // Responder al cliente con un mensaje de éxito
-            res.status(201).json({ message: 'Usuario registrado exitosamente y correo de confirmación enviado.' });
-        } catch (emailError) {
-            res.status(200).json({ error: 'Usuario registrado, pero ocurrió un error al enviar el correo de confirmación.' });
-        }
+        res.status(201).json({ message: 'Usuario registrado exitosamente' });
 
     } catch (error) {
         console.error('Error registering user:', error);
@@ -116,7 +78,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 export const login = async (req: Request, res: Response): Promise<void> => {
     const { usuario, password } = req.body;
 
-    try {
+    try { 
         // Buscar el usuario en la base de datos
         const resultSet = await client.execute({
             sql: 'SELECT * FROM usuarios WHERE usuario = ?',
@@ -161,83 +123,5 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     } catch (error) {
         console.error('Error logging in user:', error);
         res.status(500).json({ error: 'Error al iniciar sesión' });
-    }
-};
-
-export const generarCorreoRecuperacion = async (req: Request, res: Response): Promise<void> => {
-    const { correo } = req.body;
-
-    try {
-        const resultSet = await client.execute({
-            sql: 'SELECT * FROM usuarios WHERE correo = ?',
-            args: [correo]
-        });
-
-        if (Array.isArray(resultSet.rows) && resultSet.rows.length > 0) {
-            const user = resultSet.rows[0];
-            const token = jwt.sign(
-                { id: user[0], correo: user[2] },
-                process.env.JWT_SECRET as string,
-                { expiresIn: '1h' }
-            );
-
-            const resetLink = `https://proyecto-ingenieria.vercel.app/reset-password?token=${token}`;
-
-            // Enviar el correo electrónico
-            await transporter.sendMail({
-                from: process.env.OUTLOOK_USER,
-                to: correo,
-                subject: 'Recuperación de contraseña',
-                html: `
-            <div style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
-                <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-                    <div style="background-color: #0078d4; color: #ffffff; padding: 20px; text-align: center;">
-                        <h1 style="margin: 0;">Restablecimiento de Contraseña</h1>
-                    </div>
-                    <div style="padding: 20px; color: #333333;">
-                        <p>Hola,</p>
-                        <p>Has solicitado restablecer tu contraseña. Haz clic en el siguiente enlace para establecer una nueva contraseña:</p>
-                        <div style="text-align: center; margin: 20px 0;">
-                            <a href="${resetLink}" style="background-color: #0078d4; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Restablecer Contraseña</a>
-                        </div>
-                        <p>Este enlace expirará en 1 hora.</p>
-                        <p>Si no solicitaste este cambio, por favor, ignora este correo.</p>
-                    </div>
-                </div>
-            </div>
-            `
-            });
-
-            res.status(200).json({ message: 'Correo de recuperación enviado.' });
-        } else {
-            res.status(404).json({ error: 'El correo no está registrado' });
-        }
-    } catch (error) {
-        console.error('Error generating recovery email:', error);
-        res.status(500).json({ error: 'Error al generar el correo de recuperación' });
-    }
-};
-
-export const cambiarContraseña = async (req: Request, res: Response): Promise<void> => {
-    const { token, newPassword } = req.body;
-
-    if (!passwordRegex.test(newPassword)) {
-        res.status(400).json({ error: 'La contraseña debe tener al menos 8 caracteres, incluyendo al menos una letra mayúscula, una letra minúscula, un número y un símbolo(@,$,!,%,*,?,&)' });
-        return;
-    }
-    try {
-        const decodedToken = jwt.verify(token, process.env.JWT_SECRET as string) as { id: string, correo: string };
-
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-        await client.execute({
-            sql: 'UPDATE usuarios SET password = ? WHERE id = ?',
-            args: [hashedPassword, decodedToken.id]
-        });
-
-        res.status(200).json({ message: 'Contraseña actualizada exitosamente.' });
-    } catch (error) {
-        console.error('Error changing password:', error);
-        res.status(500).json({ error: 'Error al cambiar la contraseña' });
     }
 };

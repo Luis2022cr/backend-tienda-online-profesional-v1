@@ -15,11 +15,11 @@ export const obtenerUsuarioLogueado = async (req: Request, res: Response): Promi
         const resultSet = await client.execute({
             sql: `SELECT 
                     u.id, 
-                    u.nombre_usuario, 
+                    u.usuario, 
                     u.correo, 
                     u.nombre, 
                     u.apellido,
-                    r.nombre_rol AS rol_nombre, 
+                    r.nombre AS rol_nombre, 
                     u.fecha_creacion 
                   FROM usuarios u
                   JOIN roles r ON u.role_id = r.id
@@ -31,7 +31,7 @@ export const obtenerUsuarioLogueado = async (req: Request, res: Response): Promi
             const user = resultSet.rows[0];
             res.status(200).json({
                 id: user.id,
-                nombre_usuario: user.nombre_usuario,
+                usuario: user.usuario,
                 correo: user.correo,
                 nombre: user.nombre,
                 apellido: user.apellido,
