@@ -162,7 +162,7 @@ const upload = multer({
     storage,
 }).fields([
     { name: 'imagen_principal', maxCount: 1 },
-    { name: 'imagenes_adicionales[]', maxCount: 10 },
+    { name: 'imagenes_adicionales[]', maxCount: 5 },
     { name: 'file', maxCount: 1 },
 ]);
 

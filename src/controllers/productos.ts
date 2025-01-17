@@ -8,17 +8,18 @@ import { r2Client } from '../utils/r2';
 import client from "../db/turso";
 import { generateSlug } from "../utils/generarSlug";
 import { generateId } from "../utils/GenerarIdTexto";
-
+import { v4 as uuidv4 } from 'uuid';
 interface Variante {
   variante_id: string;
   valor: string;
   precio: number;
   stock: number;
-  codigo_referencia: number;
+  codigo_referencia: string;
 }
 
+
 export const crearProducto = async (req: Request, res: Response): Promise<void> => {
-  const { categoria_id, nombre, descripcion, stock, precio, tiene_variantes,codigo_referencia } = req.body;
+  const { categoria_id, nombre, descripcion, stock, precio, tiene_variantes, codigo_referencia } = req.body;
   const rawVariantes: string = req.body.variantes; // Supone que las variantes se envían como string JSON.
 
   const files = req.files as {
@@ -39,12 +40,13 @@ export const crearProducto = async (req: Request, res: Response): Promise<void> 
     }
 
     // Crear el producto
-    const id = generateId('pro'); // Generar un ID único para la variante
+   
+    const id = uuidv4();
+    
     const slug = generateSlug(nombre);
-
     await executeQuery(
-      "INSERT INTO productos (id, categoria_id, nombre, descripcion, stock, precio, imagen, slug,codigo_referencia, tiene_variantes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-      [id, categoria_id, nombre, descripcion, stock, precio, imageUrl, slug,codigo_referencia, tiene_variantes || 0]
+      "INSERT INTO productos (id, categoria_id, nombre, descripcion, stock, precio, imagen, slug, codigo_referencia, tiene_variantes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      [id, categoria_id, nombre, descripcion, stock, precio, imageUrl, slug, codigo_referencia, tiene_variantes || 0]
     );
 
     // Insertar variantes si existen
@@ -63,14 +65,13 @@ export const crearProducto = async (req: Request, res: Response): Promise<void> 
         res.status(400).json({ error: "El campo 'variantes' debe ser un array." });
         return;
       }
-
       // Filtrar y limpiar datos inesperados en el array
       variantes = variantes.filter((variante: Partial<Variante>) => {
         return (
           typeof variante === 'object' &&
           !!variante.variante_id &&
           !!variante.valor &&
-          typeof variante.codigo_referencia === 'number' &&
+          (variante.codigo_referencia || variante.codigo_referencia === '') &&  // Permite código de referencia vacío
           typeof variante.precio === 'number' &&
           typeof variante.stock === 'number'
         );
@@ -79,7 +80,8 @@ export const crearProducto = async (req: Request, res: Response): Promise<void> 
       // Procesar las variantes
       for (const variante of variantes) {
         try {
-          const varianteId = generateId('det-var'); // Generar un ID único para la variante
+          
+         const varianteId = uuidv4(); // Combinación del timestamp y el sufijo aleatorio
 
           await executeQuery(
             "INSERT INTO detalles_variantes (id, producto_id, variante_id, valor, precio, stock, codigo_referencia) VALUES (?, ?, ?, ?, ?, ?, ?)",
@@ -189,7 +191,7 @@ export const obtenerProductos = async (req: Request, res: Response): Promise<voi
 
     // Reorganizar los datos
     const productosMap = new Map();
-    
+
     // Primero asignamos los productos con sus categorías
     productoss.forEach(row => {
       if (!productosMap.has(row.producto_id)) {
@@ -365,11 +367,11 @@ export const obtenerProductoPorSlug = async (req: Request, res: Response): Promi
 
 export const getProductosTarjetaPublic = async (req: Request, res: Response): Promise<void> => {
   try {
-      // Obtener el parámetro opcional de slug de categoría desde la consulta
-      const { categoria_slug } = req.query;
+    // Obtener el parámetro opcional de slug de categoría desde la consulta
+    const { categoria_slug } = req.query;
 
-      // Construcción dinámica de la consulta SQL
-      const query = `
+    // Construcción dinámica de la consulta SQL
+    const query = `
           SELECT  
               p.nombre,  
               p.slug AS producto_slug, 
@@ -383,28 +385,28 @@ export const getProductosTarjetaPublic = async (req: Request, res: Response): Pr
           ORDER BY p.id ASC;
       `;
 
-      // Ejecutar la consulta con el parámetro opcional
-      const params = categoria_slug ? [categoria_slug] : [];
-      const resultSet = await executeQuery(query, params);
+    // Ejecutar la consulta con el parámetro opcional
+    const params = categoria_slug ? [categoria_slug] : [];
+    const resultSet = await executeQuery(query, params);
 
-      // Enviar la respuesta con los datos obtenidos
-      res.status(200).json(resultSet.rows);
+    // Enviar la respuesta con los datos obtenidos
+    res.status(200).json(resultSet.rows);
   } catch (error) {
-      if (error instanceof AppError) {
-          res.status(error.statusCode).json({ error: error.message });
-      } else {
-          res.status(500).json({ error: 'Error al obtener los productos por categoría' });
-      }
+    if (error instanceof AppError) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: 'Error al obtener los productos por categoría' });
+    }
   }
 };
 
 export const getProductosTarjetaPrivado = async (req: Request, res: Response): Promise<void> => {
   try {
-      // Obtener el parámetro opcional de slug de categoría desde la consulta
-      const { categoria_slug } = req.query;
+    // Obtener el parámetro opcional de slug de categoría desde la consulta
+    const { categoria_slug } = req.query;
 
-      // Construcción dinámica de la consulta SQL
-      const query = `
+    // Construcción dinámica de la consulta SQL
+    const query = `
           SELECT 
               p.id, 
               p.nombre, 
@@ -413,7 +415,7 @@ export const getProductosTarjetaPrivado = async (req: Request, res: Response): P
               p.precio, 
               p.stock, 
               p.imagen, 
-              p.variante_codigo,
+              p.codigo_referencia,
               c.nombre AS categoria_nombre, 
               c.slug AS categoria_slug
           FROM productos p
@@ -422,18 +424,18 @@ export const getProductosTarjetaPrivado = async (req: Request, res: Response): P
           ORDER BY p.id ASC;
       `;
 
-      // Ejecutar la consulta con el parámetro opcional
-      const params = categoria_slug ? [categoria_slug] : [];
-      const resultSet = await executeQuery(query, params);
+    // Ejecutar la consulta con el parámetro opcional
+    const params = categoria_slug ? [categoria_slug] : [];
+    const resultSet = await executeQuery(query, params);
 
-      // Enviar la respuesta con los datos obtenidos
-      res.status(200).json(resultSet.rows);
+    // Enviar la respuesta con los datos obtenidos
+    res.status(200).json(resultSet.rows);
   } catch (error) {
-      if (error instanceof AppError) {
-          res.status(error.statusCode).json({ error: error.message });
-      } else {
-          res.status(500).json({ error: 'Error al obtener los productos por categoría' });
-      }
+    if (error instanceof AppError) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: 'Error al obtener los productos por categoría' });
+    }
   }
 };
 
@@ -443,32 +445,32 @@ export const actualizarProducto = async (req: Request, res: Response): Promise<v
   const file = req.file as Express.Multer.File | undefined;
 
   try {
-      validacionesObligatorias({ categoria_id,nombre, stock,precio }, ['categoria_id', 'nombre', 'stock','precio']);
+    validacionesObligatorias({ categoria_id, nombre, stock, precio }, ['categoria_id', 'nombre', 'stock', 'precio']);
 
-      let imageUrl: string | undefined;
-      if (file) {
-          imageUrl = await subiryConvetirR2(file, 'productos');
-      }
+    let imageUrl: string | undefined;
+    if (file) {
+      imageUrl = await subiryConvetirR2(file, 'productos');
+    }
 
-      const slug = generateSlug(nombre);
+    const slug = generateSlug(nombre);
 
-      const datosActualizar: { [key: string]: string } = { categoria_id,nombre, descripcion,stock,precio, slug,variante_codigo };
-      if (imageUrl) {
-          datosActualizar.imagen = imageUrl;
-      }
+    const datosActualizar: { [key: string]: string } = { categoria_id, nombre, descripcion, stock, precio, slug, variante_codigo };
+    if (imageUrl) {
+      datosActualizar.imagen = imageUrl;
+    }
 
-      await executeQuery(
-          `UPDATE productos SET ${Object.keys(datosActualizar).map(key => `${key} = ?`).join(', ')} WHERE id = ?`,
-          [...Object.values(datosActualizar), productoId]
-      );
-    
-      res.status(200).json({ message: 'Producto actualizado exitosamente' });
+    await executeQuery(
+      `UPDATE productos SET ${Object.keys(datosActualizar).map(key => `${key} = ?`).join(', ')} WHERE id = ?`,
+      [...Object.values(datosActualizar), productoId]
+    );
+
+    res.status(200).json({ message: 'Producto actualizado exitosamente' });
   } catch (error) {
-      if (error instanceof AppError) {
-          res.status(error.statusCode).json({ error: error.message });
-      } else {
-          res.status(500).json({ error: "Error al actualizar el prodcuto" });
-      }
+    if (error instanceof AppError) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: "Error al actualizar el prodcuto" });
+    }
   }
 };
 
@@ -476,9 +478,9 @@ export const eliminarProducto = async (req: Request, res: Response): Promise<voi
   const productoId = req.params.id;
 
   try {
-      // Recuperar las imágenes asociadas al producto
-      const result = await client.execute({
-          sql: `
+    // Recuperar las imágenes asociadas al producto
+    const result = await client.execute({
+      sql: `
               SELECT 
                   p.imagen AS imagen_principal, 
                   ip.url_imagen AS imagen_adicional
@@ -486,52 +488,52 @@ export const eliminarProducto = async (req: Request, res: Response): Promise<voi
               LEFT JOIN imagenes_productos ip ON ip.producto_id = p.id
               WHERE p.id = ?
           `,
-          args: [productoId]
-      });
+      args: [productoId]
+    });
 
-      // Obtener todas las imágenes del producto
-      const images = result.rows || [];
-      const imageUrls = images.flatMap(row => [row.imagen_principal, row.imagen_adicional].filter(url => url));
+    // Obtener todas las imágenes del producto
+    const images = result.rows || [];
+    const imageUrls = images.flatMap(row => [row.imagen_principal, row.imagen_adicional].filter(url => url));
 
-      // Eliminar las imágenes del bucket de R2
-      for (const imageUrl of imageUrls) {
-          if (imageUrl && typeof imageUrl === 'string') {
-              const fileKey = imageUrl.split(`${process.env.R2_URLPUBLIC}/`)[1];
-              if (fileKey) {
-                  try {
-                      const command = new DeleteObjectCommand({
-                          Bucket: process.env.R2_BUCKET,
-                          Key: fileKey,
-                      });
-                      await r2Client.send(command);
-                  } catch (deleteError) {
-                      console.error(`Error al eliminar la imagen del bucket (${fileKey}):`, deleteError);
-                  }
-              }
+    // Eliminar las imágenes del bucket de R2
+    for (const imageUrl of imageUrls) {
+      if (imageUrl && typeof imageUrl === 'string') {
+        const fileKey = imageUrl.split(`${process.env.R2_URLPUBLIC}/`)[1];
+        if (fileKey) {
+          try {
+            const command = new DeleteObjectCommand({
+              Bucket: process.env.R2_BUCKET,
+              Key: fileKey,
+            });
+            await r2Client.send(command);
+          } catch (deleteError) {
+            console.error(`Error al eliminar la imagen del bucket (${fileKey}):`, deleteError);
           }
+        }
       }
+    }
 
-      // Eliminar las imágenes adicionales del producto
-      await client.execute({
-          sql: "DELETE FROM imagenes_productos WHERE producto_id = ?",
-          args: [productoId]
-      });
+    // Eliminar las imágenes adicionales del producto
+    await client.execute({
+      sql: "DELETE FROM imagenes_productos WHERE producto_id = ?",
+      args: [productoId]
+    });
 
-      // Eliminar variantes asociadas al producto
-      await client.execute({
-          sql: "DELETE FROM detalles_variantes WHERE producto_id = ?",
-          args: [productoId]
-      });
+    // Eliminar variantes asociadas al producto
+    await client.execute({
+      sql: "DELETE FROM detalles_variantes WHERE producto_id = ?",
+      args: [productoId]
+    });
 
-      // Eliminar el producto
-      await client.execute({
-          sql: "DELETE FROM productos WHERE id = ?",
-          args: [productoId]
-      });
+    // Eliminar el producto
+    await client.execute({
+      sql: "DELETE FROM productos WHERE id = ?",
+      args: [productoId]
+    });
 
-      res.status(200).json({ message: 'Producto eliminado exitosamente, junto con sus imágenes y variantes' });
+    res.status(200).json({ message: 'Producto eliminado exitosamente, junto con sus imágenes y variantes' });
   } catch (error) {
-      console.error('Error al eliminar el producto:', error);
-      res.status(500).json({ error: 'Error al eliminar el producto' });
+    console.error('Error al eliminar el producto:', error);
+    res.status(500).json({ error: 'Error al eliminar el producto' });
   }
 };
