@@ -10,7 +10,7 @@ export const getVariantes = async (req: Request, res: Response): Promise<void> =
     const result = await client.execute(
       "SELECT id, nombre, slug FROM variantes"
     );
-    res.status(200).json({ variantes: result.rows });
+    res.status(200).json(result.rows );
   } catch (error) {
     console.error("Error al obtener las variantes:", error);
     res.status(500).json({ error: "Error al obtener las variantes" });

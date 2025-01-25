@@ -302,7 +302,7 @@ export const obtenerProductoPorSlug = async (req: Request, res: Response): Promi
         dv.valor AS variante_valor,
         dv.precio AS variante_precio,
         dv.stock AS variante_stock,
-        dv.codigo_referencia AS variante_codigo
+        dv.codigo_referencia AS variante_codigo,
         v.nombre AS variante_nombre
     FROM detalles_variantes dv
     LEFT JOIN variantes v ON dv.variante_id = v.id
