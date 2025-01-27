@@ -1,7 +1,7 @@
 // index.ts
 import { Router } from 'express';
 import authRouter from './authRoutes';
-import { getCategorias, getCategoriaPorSlug, crearCategoria, updateCategory, deleteCategory } from '../controllers/categoriasController';
+import { getCategorias, getCategoriaPorSlug, crearCategoria, updateCategory, deleteCategory, getCategoriaslimite } from '../controllers/categoriasController';
 import {  actualizarBanner, crearBanner, eliminarBanner, getBannerPorId, getBanners } from '../controllers/bannerController';
 import { obtenerUsuarioLogueado } from '../controllers/usuarioController';
 import { authenticateJWT } from '../Middlewares/authMiddleware';
@@ -19,11 +19,12 @@ router.use('/auth', authRouter);
 
 //Endpoint de Categorias
 router.get('/categorias', getCategorias);
+router.get('/categorias_limite', getCategoriaslimite);
 router.get('/categorias/:slug', getCategoriaPorSlug);
 router.post('/categorias', crearCategoria);
 router.put('/categorias/:id', updateCategory);
 router.delete('/categorias/:id', deleteCategory);
-
+  
 //Endpoint Productos
 router.get('/productos', obtenerProductos);
 router.get('/productos/:slug', obtenerProductoPorSlug);
@@ -36,11 +37,9 @@ router.delete('/productos/:id', eliminarProducto);
 //Endpoint de detalles variantes
 router.put("/productos/:slug/variantes", modificarVariantesProducto);
 
-
 //Endpoint imagenes adicionales
 router.post('/productos/:slug/imagenes', modificarImagenesProducto);  // Para crear o eliminar imagen
 
-//Endpoint varainte
 // Rutas para las variantes
 router.get('/variantes', getVariantes);                  // Obtener todas las variantes
 router.get('/variantes/:slug', getVariantePorSlug);      // Obtener variante por slug

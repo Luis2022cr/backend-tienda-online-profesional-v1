@@ -13,6 +13,17 @@ export const getCategorias = async (req: Request, res: Response): Promise<void> 
     }
 };
 
+export const getCategoriaslimite = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const resultSet = await executeQuery("SELECT * FROM categorias ORDER BY id ASC LIMIT 6;");
+
+        res.status(200).json(resultSet.rows);
+    } catch (error) {
+        console.error('Error fetching categories:', error);
+        res.status(500).json({ error: 'Error fetching categories' });
+    }
+};
+
 export const getCategoriaPorSlug = async (req: Request, res: Response): Promise<void> => {
     const { slug } = req.params;
 
