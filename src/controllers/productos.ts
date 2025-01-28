@@ -9,6 +9,7 @@ import client from "../db/turso";
 import { generateSlug } from "../utils/generarSlug";
 import { generateId } from "../utils/GenerarIdTexto";
 import { v4 as uuidv4 } from 'uuid';
+import { verificarExisteEnDb } from "../services/existeDatoEnDb";
 interface Variante {
   variante_id: string;
   valor: string;
@@ -31,6 +32,15 @@ export const crearProducto = async (req: Request, res: Response): Promise<void> 
       throw new AppError("Faltan campos obligatorios.", 400);
     }
 
+    const slug = generateSlug(nombre);
+
+    await verificarExisteEnDb(
+      'productos',
+      'nombre',
+      nombre,
+      'Ya existe una producto con ese nombre.'
+    );
+
     // Subir la imagen principal
     let imageUrl = null;
     if (files.imagen_principal && files.imagen_principal[0]) {
@@ -40,10 +50,9 @@ export const crearProducto = async (req: Request, res: Response): Promise<void> 
     }
 
     // Crear el producto
-   
+
     const id = uuidv4();
-    
-    const slug = generateSlug(nombre);
+
     await executeQuery(
       "INSERT INTO productos (id, categoria_id, nombre, descripcion, stock, precio, imagen, slug, codigo_referencia, tiene_variantes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [id, categoria_id, nombre, descripcion, stock, precio, imageUrl, slug, codigo_referencia, tiene_variantes || 0]
@@ -80,8 +89,8 @@ export const crearProducto = async (req: Request, res: Response): Promise<void> 
       // Procesar las variantes
       for (const variante of variantes) {
         try {
-          
-         const varianteId = uuidv4(); // Combinación del timestamp y el sufijo aleatorio
+
+          const varianteId = uuidv4(); // Combinación del timestamp y el sufijo aleatorio
 
           await executeQuery(
             "INSERT INTO detalles_variantes (id, producto_id, variante_id, valor, precio, stock, codigo_referencia) VALUES (?, ?, ?, ?, ?, ?, ?)",

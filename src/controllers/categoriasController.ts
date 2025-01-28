@@ -55,8 +55,9 @@ export const crearCategoria = async (req: Request, res: Response): Promise<void>
     ? (req.files['file'] as Express.Multer.File[])[0]
     : undefined; 
 
+    console.log(file)
     try {
-        validacionesObligatorias({ nombre,descripcion, file }, ['nombre', 'descripcion', 'file']);
+        validacionesObligatorias({ nombre,descripcion }, ['nombre', 'descripcion']);
 
         if (!file) {
             throw new AppError("No se proporcionó ningún archivo.", 400);
